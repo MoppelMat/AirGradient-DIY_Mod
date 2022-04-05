@@ -37,8 +37,8 @@ const int updateFrequency = 5000;
 // For housekeeping.
 long lastUpdate;
 int counter = 0;
-//pm2 remebered default value of 22 that does not hurt anyone
-int pm2_remember = 22;
+//pm2 remebered default value of 20 that does not hurt anyone
+int pm2_remember = 20;
 
 // Config End ------------------------------------------------------------------
 
@@ -110,15 +110,15 @@ String GenerateMetrics() {
   if (hasPM) {
     int stat = ag.getPM2_Raw();
     if (stat == 0) {
-      //pm2 value of 0 is plain wrong, we need to change that (take last remembered value or default of 22)
-      for(int i=0; i < 3; i++) {
-        //try again of a maximum of 3 times
+      //pm2 value of 0 is plain wrong, we need to change that (take last remembered value or default of 20)
+      for(int i=0; i < 2; i++) {
+        //try again of a maximum of 2 times
         delay(100);
         stat = ag.getPM2_Raw();
         if (stat != 0) break;
       }
-      //if it is still 0 after 3 retries, change read value to last remembered pm2 value
-      if (stat == 0) {
+      //if it is still 0 after 2 retries, and the diff between measurements is above 10, then change read value to last remembered pm2 value
+      if (stat == 0 && pm2_remember > 9) {
         stat = pm2_remember;
       }
       else {
